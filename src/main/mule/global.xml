@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+	xmlns:sfdc-marketing-cloud-rest="http://www.mulesoft.org/schema/mule/sfdc-marketing-cloud-rest"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sfdc-marketing-cloud="http://www.mulesoft.org/schema/mule/sfdc-marketing-cloud" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sfdc-marketing-cloud http://www.mulesoft.org/schema/mule/sfdc-marketing-cloud/current/mule-sfdc-marketing-cloud.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/sfdc-marketing-cloud-rest http://www.mulesoft.org/schema/mule/sfdc-marketing-cloud-rest/current/mule-sfdc-marketing-cloud-rest.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd">
+	<os:object-store name="Object_store-access_token" doc:name="Object store" doc:id="f9aa21af-fa5f-4626-b5c0-c3382fe715c3" entryTtl="1078" config-ref="ObjectStore_Config" maxEntries="1" expirationInterval="60" expirationIntervalUnit="SECONDS"/>
+	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="aa96ef28-4ca6-4ae3-a8c0-9b2f4f559ea1" />
+	<db:config name="MSSQL_Database" doc:name="Database Config" doc:id="13c293ef-eb13-487d-9702-5a53440df5bb" >
+		<db:mssql-connection host="${sql.host}" port="1433" user="${sql.username}" password="${secure::sql.password}" databaseName="${sql.dbname}" />
+	</db:config>
+	<db:config name="MSSQL-scuba" doc:name="Database Config" doc:id="a54ffee6-d90b-45a9-8bf3-a5ae63d2cdbb" >
+		<db:mssql-connection host="${scuba.host}" port="1433" user="${scuba.username}" password="${secure::scuba.password}" databaseName="${scuba.dbname}" />
+	</db:config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="730b3dcb-a82e-40b6-9938-71f5668153b5" file="config-secure.yaml" key="3ncryptP@ssw0rd" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="5d199ef7-3e04-4375-9573-e7fc28c49a06" file="config.yaml" />
+	<sfdc-marketing-cloud:config name="Salesforce_Marketing_Cloud_Config" doc:name="Salesforce Marketing Cloud Config" doc:id="e6e2f6d1-f766-4353-b52c-b6aa8731299f" >
+		<sfdc-marketing-cloud:oauth-client-credentials-connection serviceUrl="https://${sfmc.subdomain}.soap.marketingcloudapis.com/Service.asmx">
+			<sfdc-marketing-cloud:oauth-client-credentials clientId="${sfmc.client_id}" clientSecret="${sfmc.client_secret}" tokenUrl="https://${sfmc.subdomain}.auth.marketingcloudapis.com/v2/token" />
+			<sfdc-marketing-cloud:oauth-store-config objectStore="Object_store-access_token" />
+		</sfdc-marketing-cloud:oauth-client-credentials-connection>
+	</sfdc-marketing-cloud:config>
+	<sfdc-marketing-cloud-rest:config name="Salesforce_Marketing_Cloud_REST_Config" doc:name="Salesforce Marketing Cloud REST Config" doc:id="7e4dba6b-46a7-4f39-93af-620aeabb9ac8" >
+		<sfdc-marketing-cloud-rest:oauth-client-credentials-connection serviceUrl="https://${sfmc.subdomain}.rest.marketingcloudapis.com">
+			<sfdc-marketing-cloud-rest:oauth-client-credentials tokenUrl="https://${sfmc.subdomain}.auth.marketingcloudapis.com/v2/token" clientId="${sfmc.client_id}" clientSecret="${sfmc.client_secret}"/>
+			<sfdc-marketing-cloud-rest:oauth-store-config objectStore="Object_store-access_token" />
+		</sfdc-marketing-cloud-rest:oauth-client-credentials-connection>
+	</sfdc-marketing-cloud-rest:config>
+	<http:request-config name="HTTP_Request_SFMC_Token" doc:name="HTTP Request configuration" doc:id="4796906c-5c6e-4f73-ba96-55d8aab94cf6" >
+		<http:request-connection protocol="HTTPS" host="${sfmc.subdomain}.auth.marketingcloudapis.com" >
+		</http:request-connection>
+	</http:request-config>
+	<http:request-config name="HTTP_Request_SFMC" doc:name="HTTP Request configuration" doc:id="5112871f-3e12-44fb-a4b5-d997a5c30656" >
+		<http:request-connection protocol="HTTPS" host="${sfmc.subdomain}/rest.marketingcloudapis.com" >
+			<http:authentication >
+				<oauth:client-credentials-grant-type clientId="${sfmc.client_id}" clientSecret="${sfmc.client_secret}" tokenUrl="#['https://${sfmc.subdomain}.auth.marketingcloudapis.com/v2/token']" />
+			</http:authentication>
+		</http:request-connection>
+	</http:request-config>
+	<ee:object-store-caching-strategy name="Caching_Strategy_Access_Token" doc:name="Caching Strategy" doc:id="20541d68-c205-4c0b-8645-5fa184f246e8" keyGenerationExpression="access_token" objectStore="Object_store-access_token" />
+	<http:request-config name="HTTP_Request_OneTrust" doc:name="HTTP Request configuration" doc:id="9532fa31-cd31-48e7-92a5-50e28f9fddd9" >
+		<http:request-connection protocol="HTTPS" host="uat-na01.onetrust.com" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_OneTrust_PrivacyPortal" doc:name="HTTP Request configuration" doc:id="8a1acf91-502d-4e3a-b7da-859de51c7850" >
+		<http:request-connection protocol="HTTPS" host="privacyportal-uat-na01.onetrust.com" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_OneTrust_Preferences" doc:name="HTTP Request configuration" doc:id="063ff4d5-8830-4d94-8d66-3bdc53da47f8" >
+		<http:request-connection protocol="HTTPS" host="preferences.ucsf.edu" />
+	</http:request-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="d75d0e1f-73cf-40e9-9127-2522896c3977" >
+		<salesforce:jwt-connection consumerKey="3MVG99PRsqIQWIIw0zVM_gFsS7toAr9.ABVgLmNoBS_0veuH.JhiKG.gVlS1zI6az4qQfSnppZzfBNii.DyBp" keyStore="${sfdc.keystore}" certificateAlias="mule_jwt_2023" principal="${sfdc.principal}" tokenEndpoint="${sfdc.token_endpoint}" audienceUrl="${sfdc.audience_url}" storePassword="Tb20YtrPym9jL2Gd"/>
+	</salesforce:sfdc-config>
+	<anypoint-mq:config name="Anypoint_MQ_Config-Salesforce" doc:name="Anypoint MQ Config" doc:id="9350e93a-5454-4375-9b47-98f5226dd3d8" >
+		<anypoint-mq:connection url="https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/034cb83d-ac30-489a-af9e-560493ddb656" clientId="0617b4b06ad644a9b635e9e7548f5350" clientSecret="2d550C90f3fd4d27b1CCC7292C95b64a" />
+	</anypoint-mq:config>
+	<anypoint-mq:config name="Anypoint_MQ_Config-Exchange" doc:name="Anypoint MQ Config" doc:id="33c65f5f-5fc9-447e-9acc-5d09f266e1a9" >
+		<anypoint-mq:connection url="https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/034cb83d-ac30-489a-af9e-560493ddb656" clientId="9a519a3b1292421bb8cadd65f62d5700" clientSecret="8cdc6FE4776e45c5A7C84b0Ec0404257"/>
+	</anypoint-mq:config>
+	<anypoint-mq:config name="Anypoint_MQ_Config-Onetrust" doc:name="Anypoint MQ Config" doc:id="512e5200-22bd-4e51-a189-4aeebddba5fe" >
+		<anypoint-mq:connection url="https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/034cb83d-ac30-489a-af9e-560493ddb656" clientId="427ed127872b41a3b5d8bca3522adf2e" clientSecret="Fc08Bc25b4D34cfF86Ec128b3B9CccB5"/>
+	</anypoint-mq:config>
+	<http:request-config name="HTTP_Request_PrefsCtr" doc:name="HTTP Request configuration" doc:id="71ae148f-f103-44c1-8192-6bd605adeb44" >
+		<http:request-connection host="${pref-ctr.host}" />
+	</http:request-config>
+</mule>

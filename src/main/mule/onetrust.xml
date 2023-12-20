@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="onetrust-consentreceipts-post" doc:id="3781ed88-4abd-4682-9f31-87272bba58f3" >
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="70a297c4-c90f-4f83-9f2b-a60368ac720d" variableName="apiToken" />
+		<http:request method="POST" doc:name="Request" doc:id="257acd1e-f84f-4f8a-8ed5-9deff2dde538" config-ref="HTTP_Request_OneTrust_PrivacyPortal" path="/request/v1/consentreceipts">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	Authorization : vars.apiToken
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-collectionpt-get" doc:id="b9913d53-b660-454c-911f-e870c7cd8a47" >
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="830a3a61-6b91-407a-adfe-206ab44f7d5e" variableName="apiToken" />
+		<http:request method="GET" doc:name="Request-collectionpt" doc:id="c9c47b07-b801-4e11-b9ea-c27c6621d4d2" config-ref="HTTP_Request_OneTrust" path="#['/api/consentmanager/v1/collectionpoints/' ++ vars.collectionpt ++ '/token']" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : vars.apiToken
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-preferences-get" doc:id="580dc7d8-0a9f-4a6a-84dc-96b4fde50cac" >
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="478f49a7-56e5-4d30-9717-816620b98e89" variableName="apiToken" />
+		<http:request method="GET" doc:name="Request-preferences" doc:id="010ce03d-670d-4236-a644-a84d4cf1fc70" config-ref="HTTP_Request_OneTrust" path="#['/v1/preferences']" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"identifier" : vars.identifier,
+	"Authorization" : vars.apiToken,
+	"tenantId" : '${onetrust.tenant_id}'
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	syncGroup : vars.groupid
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-datasubject-get" doc:id="fe740436-3786-4e16-9e9a-9981305e3dfd" >
+		<http:request method="GET" doc:name="Request-datasubjects/profile" doc:id="6b673e30-b1db-40e9-96d9-3f841bd164ff" config-ref="HTTP_Request_OneTrust" path="/rest/api/preferences/v3/datasubjects/profile" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"identifier" : vars.identifier,
+	"Authorization" : "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Imp3dCJ9.eyJyb2xlIjoiQXBpIEtleSBVc2VyIiwiZGZkIjoib25ldHJ1c3QudWNzZi5lZHUiLCJhYWQiOiI4OTZjYWFmYWViMDQ0ZDhhODg3ZTE4MDhlZWQ2OTgwNC5teS5vbmV0cnVzdC5jb20iLCJ1c2VyX25hbWUiOiI4OTZjYWFmYWViMDQ0ZDhhODg3ZTE4MDhlZWQ2OTgwNEBhcGkub25ldHJ1c3QuY29tIiwibGFuZ3VhZ2VJZCI6MSwic2Vzc2lvbklkIjoiMTYxNTBiZDItOTcyNy00YjdjLThhNTEtMWVjNzA3OGI0ZDM0IiwidGVuYW50R3VpZCI6Ijg5NmNhYWZhLWViMDQtNGQ4YS04ODdlLTE4MDhlZWQ2OTgwNCIsImNsaWVudF9pZCI6IjAyNTdkMzgzMGNjMjQ5OTliNjY3MTA3NjRjMDJlMTI2IiwiZHNhIjoiODk2Y2FhZmFlYjA0NGQ4YTg4N2UxODA4ZWVkNjk4MDQtcHJpdmFjeS5teS5vbmV0cnVzdC5jb20iLCJvcmdHcm91cElkIjoiMGYyMzQwZWUtNTQzNi00YTZhLTgzYjAtY2RlZDY1NWYzYmYzIiwib3JnR3JvdXBHdWlkIjoiMGYyMzQwZWUtNTQzNi00YTZhLTgzYjAtY2RlZDY1NWYzYmYzIiwib3Qtc2NvcGVzIjoiQURNSU4sQVRUQUNITUVOVCxBVFRBQ0hNRU5UX1JFQUQsQ09OU0VOVCxDT05TRU5UX1JFQUQsQ09PS0lFLENPT0tJRV9GUkVFLENPT0tJRV9SRUFELElOVEVHUkFUSU9OX0pXS1MsSU5URUdSQVRJT05TLE9SR0FOSVpBVElPTixTQ0lNLFVTRVIiLCJzY29wZSI6WyJyZWFkIl0sInRlbmFudElkIjo1MSwiZ3VpZCI6ImYwMzYxN2MwLWJjMzktNDY2MC1hNDQwLWJlZDBjZTU2Nzk3MiIsImRwZCI6InByZWZlcmVuY2VzLnVjc2YuZWR1IiwiZXhwIjoxNzI2MjM1MjY3LCJqdGkiOiJOVE9RTXA1MWM0bXBaXzJNajNXMkt3WERQOTgiLCJlbWFpbCI6Ijg5NmNhYWZhZWIwNDRkOGE4ODdlMTgwOGVlZDY5ODA0QGFwaS5vbmV0cnVzdC5jb20ifQ.BnqV-w6119vLflbIbNJbOfaWwDhTf8V4yf2EHUMSsvf_oPwhoXVKbLuK0ovT5kljhlTUlsjMRcAc5d2PRk76420v1_mEBk55760lDZCJK24dUwF8Yk5_dU7JUpLKpqdFfHFrxoqZUU_kjHJRwGUs4RzVFQHBHj8AfMWFoB6MnLSO8UmuvMzWv9SaN0Ixt_rzZ4CqM72jWUtlgxbolaJSQTYwvWtpdiiZFXvnaNBgcHG5RjQSVLt2vZlVj5ngBjuonTMQ0ggTjgct2rxMKdiBCtOVOoPBq1wnEAQtLJhjloNdXvnxke3M4g4X8G9clfazU18szOawTKvdg_jSFRuflw"
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"includeInstantLinkToken" : true
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-datasubject-post" doc:id="f72feda5-1650-4b5c-94c2-4adad4abc5a4">
+		<http:request method="POST" doc:name="Request-datasubjects/profile" doc:id="24771d17-4e0b-4204-a75a-814e5c256fd4" config-ref="HTTP_Request_OneTrust" path="/api/consentmanager/v1/datasubjects/dataelements">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"dataSubjectIdentifier" : vars.identifier,
+	"Authorization" : "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Imp3dCJ9.eyJyb2xlIjoiQXBpIEtleSBVc2VyIiwiZGZkIjoib25ldHJ1c3QudWNzZi5lZHUiLCJhYWQiOiI4OTZjYWFmYWViMDQ0ZDhhODg3ZTE4MDhlZWQ2OTgwNC5teS5vbmV0cnVzdC5jb20iLCJ1c2VyX25hbWUiOiI4OTZjYWFmYWViMDQ0ZDhhODg3ZTE4MDhlZWQ2OTgwNEBhcGkub25ldHJ1c3QuY29tIiwibGFuZ3VhZ2VJZCI6MSwic2Vzc2lvbklkIjoiMTYxNTBiZDItOTcyNy00YjdjLThhNTEtMWVjNzA3OGI0ZDM0IiwidGVuYW50R3VpZCI6Ijg5NmNhYWZhLWViMDQtNGQ4YS04ODdlLTE4MDhlZWQ2OTgwNCIsImNsaWVudF9pZCI6IjAyNTdkMzgzMGNjMjQ5OTliNjY3MTA3NjRjMDJlMTI2IiwiZHNhIjoiODk2Y2FhZmFlYjA0NGQ4YTg4N2UxODA4ZWVkNjk4MDQtcHJpdmFjeS5teS5vbmV0cnVzdC5jb20iLCJvcmdHcm91cElkIjoiMGYyMzQwZWUtNTQzNi00YTZhLTgzYjAtY2RlZDY1NWYzYmYzIiwib3JnR3JvdXBHdWlkIjoiMGYyMzQwZWUtNTQzNi00YTZhLTgzYjAtY2RlZDY1NWYzYmYzIiwib3Qtc2NvcGVzIjoiQURNSU4sQVRUQUNITUVOVCxBVFRBQ0hNRU5UX1JFQUQsQ09OU0VOVCxDT05TRU5UX1JFQUQsQ09PS0lFLENPT0tJRV9GUkVFLENPT0tJRV9SRUFELElOVEVHUkFUSU9OX0pXS1MsSU5URUdSQVRJT05TLE9SR0FOSVpBVElPTixTQ0lNLFVTRVIiLCJzY29wZSI6WyJyZWFkIl0sInRlbmFudElkIjo1MSwiZ3VpZCI6ImYwMzYxN2MwLWJjMzktNDY2MC1hNDQwLWJlZDBjZTU2Nzk3MiIsImRwZCI6InByZWZlcmVuY2VzLnVjc2YuZWR1IiwiZXhwIjoxNzI2MjM1MjY3LCJqdGkiOiJOVE9RTXA1MWM0bXBaXzJNajNXMkt3WERQOTgiLCJlbWFpbCI6Ijg5NmNhYWZhZWIwNDRkOGE4ODdlMTgwOGVlZDY5ODA0QGFwaS5vbmV0cnVzdC5jb20ifQ.BnqV-w6119vLflbIbNJbOfaWwDhTf8V4yf2EHUMSsvf_oPwhoXVKbLuK0ovT5kljhlTUlsjMRcAc5d2PRk76420v1_mEBk55760lDZCJK24dUwF8Yk5_dU7JUpLKpqdFfHFrxoqZUU_kjHJRwGUs4RzVFQHBHj8AfMWFoB6MnLSO8UmuvMzWv9SaN0Ixt_rzZ4CqM72jWUtlgxbolaJSQTYwvWtpdiiZFXvnaNBgcHG5RjQSVLt2vZlVj5ngBjuonTMQ0ggTjgct2rxMKdiBCtOVOoPBq1wnEAQtLJhjloNdXvnxke3M4g4X8G9clfazU18szOawTKvdg_jSFRuflw"
+}]]]></http:headers>
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"includeInstantLinkToken" : true
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-link-identities-get" doc:id="5753d830-4c4b-4ce4-af8c-09ef82fd4feb">
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="54c9fb9b-7818-4b11-9ce4-f92f5f1af39f" variableName="apiToken" />
+		<http:request method="GET" doc:name="Request" doc:id="89a38957-2664-4c2a-97b2-82b5f2b163ce" config-ref="HTTP_Request_OneTrust" path="#['/api/consentmanager/v2/linkedidentitygroups/' ++ vars.groupIdentifier]">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : vars.apiToken
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-link-identities-post" doc:id="2ed837b4-aaa5-432b-a2ab-81b89c18bcb3">
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="0e29cbc8-5429-4203-ac64-a0e2abb90458" variableName="apiToken" />
+		<http:request method="POST" doc:name="Request" doc:id="cc9cf5ae-5f8b-4461-87cd-a1e0f543fade" config-ref="HTTP_Request_OneTrust" path="/api/consentmanager/v2/linkedidentitygroups">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : vars.apiToken
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-link-identities-put" doc:id="110ed7d3-c27d-4353-8e62-ab86eb893f96">
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="088bc2f8-636b-41ea-9990-8d07e6823a9d" variableName="apiToken" />
+		<http:request method="POST" doc:name="Request" doc:id="16e37f40-255a-4546-aa1b-63ae6f0c0c6f" config-ref="HTTP_Request_OneTrust" path="/api/consentmanager/v2/linkedidentitygroups">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : vars.apiToken
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="onetrust-linktokens-get" doc:id="f259fa8e-b0aa-4bfb-b935-1c6bc213c01d">
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="d4d390cb-76fd-4248-8b25-ea7cb96f1d24" variableName="apiToken" />
+		<http:request method="GET" doc:name="GET consentmanager-v1-linktokens" doc:id="0761368f-6e00-42f2-b064-b8f3727b8def" config-ref="HTTP_Request_OneTrust" path="/api/consentmanager/v1/linktokens">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"identifier" : vars.identifier,
+	"Authorization" : vars.apiToken
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="8facd347-95ef-4c14-89db-7f798be245a4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.content[0]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

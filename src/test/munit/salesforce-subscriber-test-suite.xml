@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="salesforce-subscriber-test-suite.xml" />
+	<munit:test name="salesforce-subscriber-test-suite-anypointmq-salesforce-subscriberTest" doc:id="360b9f48-4275-437d-be0a-b10d28f48561" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to anypointmq-salesforce-subscriber" doc:id="09ac11b1-65dd-4494-8279-d08471d625e5" name="anypointmq-salesforce-subscriber"/>
+		</munit:execution>
+	</munit:test>
+
+</mule>

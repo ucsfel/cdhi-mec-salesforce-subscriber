@@ -1,0 +1,46 @@
+sfmc:
+  client_id: "zzrzoenezrlwv61agervfb5u"
+  client_secret: "mEOAxhsa9fgX0G1aaG9ln7JM"
+  token_url: "https://mcv7128ncglg133p2kjr3ml9t338.auth.marketingcloudapis.com/v2/token"
+  subdomain: "mctbbslbdjnl732r4zv089b47m90"
+  account_id: "7207804"
+  data_extension:
+    external_key: "637099D6-BB83-4386-A92D-93747B35B377"
+sfdc:
+  keystore: "csmule.jks"
+  token_endpoint: "https://ucsf-clinicalcrm--tst.sandbox.my.salesforce.com/services/oauth2/token"
+  principal: "integration.scuba@ucsf.edu.tst"
+  audience_url: "https://test.salesforce.com"
+
+#DB_HOST=10.67.11.61
+#DB_HOST=64.54.198.200 (NAT)    
+sql:
+  host: "10.67.11.61"
+  url: "jdbc:sqlserver://10.67.11.61:1433;DataBaseName=MarketingCloudMirror"
+  username: "hstk_tst_admin"
+  dbname: "MarketingCloudMirror"
+#scuba config
+scuba:
+  host: "scuba-db-dev.ucsfmedicalcenter.org"
+  port: "1433"
+  username: "svc-mulescubadev"
+  dbname: "MarketingCloudMirror"
+runtime:
+  passcode: "3ncryptP@ssw0rd"
+onetrust:
+  api_token: "ZjIxOTNhZTkyYjQwNDRmYmJjYzFkZjNjMjAxZDY2ZDA6Qzl3WklxdEg2NXp5QkFjOFNJYVN4WG5ETjYyNUxRaUg="
+  pref_url: "https://privacyportal-uat-na01.onetrust.com/ui/#/preferences/multipage/token/"
+  tenant_id: "3f7d73cb-56ff-4414-b776-0930993842c6"
+pref-ctr:
+  host: "dev-unified-api.ucsf.edu"
+  client_id: "3e04456f45234fdabc62971070301748"
+  client_secret: "C3d1cD05058C42BAb9463FBB04693862"
+messageQueue:
+  mqUrl: "https://mq-us-west-2.anypoint.mulesoft.com/api/v1"
+  clientId: "cdba0a634b1e4a409a92b2ecabc19efb"
+  queueName: "faxUploader"
+  circuitBreaker:
+    errors: "HTTP:SERVICE_UNAVAILABLE, HTTP:CONNECTIVITY, HTTP:TIMEOUT, HTTP:RETRY_EXHAUSTED, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED"
+    threshold: "3"
+    tripTimeout: "10"
+
