@@ -10,6 +10,9 @@
 	<munit:config name="salesforce-subscriber-test-suite.xml" />
 	<munit:test name="salesforce-subscriber-test-suite-anypointmq-salesforce-subscriberTest" doc:id="360b9f48-4275-437d-be0a-b10d28f48561" description="Test">
 		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="4b2bb0d5-681e-4254-a9e7-1bcf2b08b407" >
+				<munit:payload value="#[output application/json --- &#10;&#10;readUrl('classpath://mq\mock_consentreceipt_payload.dwl')]" />
+			</munit:set-event>
 			<flow-ref doc:name="Flow-ref to anypointmq-salesforce-subscriber" doc:id="09ac11b1-65dd-4494-8279-d08471d625e5" name="anypointmq-salesforce-subscriber"/>
 		</munit:execution>
 	</munit:test>

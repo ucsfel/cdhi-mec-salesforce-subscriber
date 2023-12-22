@@ -38,9 +38,13 @@ pref-ctr:
 messageQueue:
   mqUrl: "https://mq-us-west-2.anypoint.mulesoft.com/api/v1"
   clientId: "cdba0a634b1e4a409a92b2ecabc19efb"
-  queueName: "faxUploader"
+  queueName: "consent-receipt-sfdc-in"
   circuitBreaker:
     errors: "HTTP:SERVICE_UNAVAILABLE, HTTP:CONNECTIVITY, HTTP:TIMEOUT, HTTP:RETRY_EXHAUSTED, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED"
     threshold: "3"
     tripTimeout: "10"
+cloudhub:
+  clientid: "cf2ea576bb2c4c8e864d333dc0c1c95a"
+  environment: "034cb83d-ac30-489a-af9e-560493ddb656"
+  domain: "dev-mec-salesforce-subscriber"
 

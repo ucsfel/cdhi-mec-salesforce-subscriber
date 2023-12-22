@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
 	<flow name="anypointmq-salesforce-subscriber" doc:id="d4d115e2-a121-4dba-b988-221035a39aa2" >
-		<anypoint-mq:subscriber doc:name="Subscriber" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce" destination="new-lead-ot-datasubject-in" outputMimeType="application/json" />
+		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-sfdc-in" outputMimeType="application/json" >
+			<reconnect-forever />
+			<anypoint-mq:circuit-breaker onErrorTypes="${messageQueue.circuitBreaker.errors}" errorsThreshold="2" tripTimeout="5000" />
+		</anypoint-mq:subscriber>
 		<set-variable value="#[payload]" doc:name="tmpPayload" doc:id="d4017077-4a5a-4dd6-9825-99a7d5535e33" variableName="tmpPayload"/>
 		<set-variable value="#[payload.collectionPoint]" doc:name="collectionPt" doc:id="481554e8-8fea-4b03-a415-4b4f6d604072" variableName="collectionPt"/>
 		<ee:transform doc:name="Transform Message" doc:id="055eebb3-6564-479c-a6f0-620719d2e568" >
@@ -24,7 +28,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<http:request method="POST" doc:name="Request- datasubject" doc:id="3a377429-69b1-4ecf-a5a5-4073e00e8856" config-ref="HTTP_Request_PrefsCtr" path="/mec/prefs-ctr/1.0/onetrust/datasubject">
+		<http:request method="POST" doc:name="Request- datasubject" doc:id="3a377429-69b1-4ecf-a5a5-4073e00e8856" config-ref="HTTP_Request_PrefsCtr" path="/mec/prefs-ctr/1.0/onetrust/datasubjectX">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -41,6 +45,22 @@ output application/json
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b5162478-48b0-4146-b8d9-ee379535b83c" >
 				<logger level="INFO" doc:name="TODO: push tmppayload into error q" doc:id="e1a28be6-9f08-4658-9aaa-6df015466a20" />
+				<ee:transform doc:name="Transform Message" doc:id="7c0d8516-79d2-48a0-ab6a-1c1cb36ab22b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+
+var entry = error.detailedDescription
+output application/java
+---
+{
+	datetime: now() as LocalDateTime,
+	logentry: 'ERROR SALESFORCE SUBSCRIBER: ' ++ entry
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<cloudhub:create-notification domain="${cloudhub.domain}" doc:name="Create Notification" doc:id="ce695e5c-d620-4119-8fd2-f581df9cfed0" config-ref="CloudHub_Config" priority="ERROR" >
+					<cloudhub:message ><![CDATA[#[payload.logentry]]]></cloudhub:message>
+				</cloudhub:create-notification>
 			</on-error-continue>
 		</error-handler>
 	</flow>
