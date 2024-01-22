@@ -31,6 +31,7 @@ onetrust:
   api_token: "ZjIxOTNhZTkyYjQwNDRmYmJjYzFkZjNjMjAxZDY2ZDA6Qzl3WklxdEg2NXp5QkFjOFNJYVN4WG5ETjYyNUxRaUg="
   pref_url: "https://privacyportal-uat-na01.onetrust.com/ui/#/preferences/multipage/token/"
   tenant_id: "3f7d73cb-56ff-4414-b776-0930993842c6"
+  patient_collection_pt: "6ce6ed5c-7dd2-4ec1-aaf4-d7109a73c0c3"
 pref-ctr:
   host: "dev-unified-api.ucsf.edu"
   client_id: "3e04456f45234fdabc62971070301748"

@@ -9,59 +9,6 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd">
-	<flow name="marketingcloud-soap" doc:id="6a6f7ef4-c1a8-4522-8e33-b6454b37317d" initialState="stopped">
-		<scheduler doc:name="Scheduler" doc:id="7b41d90a-7e78-4f3e-b3d9-96b161bf426d" >
-			<scheduling-strategy >
-				<fixed-frequency frequency="1" timeUnit="DAYS"/>
-			</scheduling-strategy>
-		</scheduler>
-		<sfdc-marketing-cloud:retrieve doc:name="Retrieve entities" doc:id="be231240-5274-42d7-82a7-3af9bf573a40" config-ref="Salesforce_Marketing_Cloud_Config">
-			<sfdc-marketing-cloud:query ><![CDATA[#['SELECT']]]></sfdc-marketing-cloud:query>
-		</sfdc-marketing-cloud:retrieve>
-	</flow>
-	<flow name="marketingcloud-rest" doc:id="82bd904f-dfd4-4a02-811c-d6cbde415abe" initialState="stopped">
-		<scheduler doc:name="Scheduler" doc:id="5dfe4469-8f92-4911-a801-77c47a1da145" >
-			<scheduling-strategy >
-				<fixed-frequency frequency="1" timeUnit="DAYS"/>
-			</scheduling-strategy>
-		</scheduler>
-		<sfdc-marketing-cloud-rest:get-event-definition doc:name="Get event definition" doc:id="5bf2f7eb-1f69-41be-816f-13a03eb57e99" config-ref="Salesforce_Marketing_Cloud_REST_Config" eventDefinitionId="1234567890"/>
-	</flow>
-	<flow name="marketingcloud-api" doc:id="615a82e5-e7c2-44e5-9531-8fc1863abadf" >
-		<scheduler doc:name="Scheduler" doc:id="4278c204-ebf1-4e66-a148-2def457c0932" >
-			<scheduling-strategy >
-				<fixed-frequency frequency="1" timeUnit="DAYS"/>
-			</scheduling-strategy>
-		</scheduler>
-		<ee:cache doc:name="Cache" doc:id="949b414a-7dd9-4121-bc28-d3b2ee29436f" cachingStrategy-ref="Caching_Strategy_Access_Token">
-			<http:request method="POST" doc:name="accessToken" doc:id="f5b8c1f9-2bc6-4085-94fd-df0ec36ecb5f" config-ref="HTTP_Request_SFMC_Token" path="/v2/token ">
-			<http:body><![CDATA[#[%dw 2.0
-output application/json
----
-{
-    "grant_type": "client_credentials",
-    "client_id": p('sfmc.client_id') ,
-    "client_secret": p('sfmc.client_secret')
-}]]]></http:body>
-			<http:headers><![CDATA[#[output application/java
----
-{
-	"Accept" : "*/*",
-	"Content-Type" : "application/json"
-}]]]></http:headers>
-		</http:request>
-		</ee:cache>
-		<logger level="INFO" doc:name="Logger" doc:id="a9eccb96-008b-4900-a01f-ef8b85b59eb7" />
-	</flow>
-	<flow name="salesforce-onnew-contact" doc:id="86c4fe77-5ac4-4061-befd-b2c2d3d99f0d" >
-		<salesforce:new-object-listener objectType="Contact" doc:name="On New Object- Contact" doc:id="dcd990e1-79c8-4abe-99ea-847383ee6db7" config-ref="Salesforce_Config" >
-			<scheduling-strategy >
-				<fixed-frequency />
-			</scheduling-strategy>
-		</salesforce:new-object-listener>
-		<logger level="INFO" doc:name="TODO: create DS in OneTrust" doc:id="864b4128-f4dc-4836-82e6-268d46fc8194" />
-		<flow-ref doc:name="onetrust-datasubject-post" doc:id="89b63823-d246-4c20-bc8f-703e749a023e" name="onetrust-datasubject-post" />
-	</flow>
 	<sub-flow name="salesforce-onmodified-contact" doc:id="73452f93-cb78-415a-b350-17b2d27d36b5" >
 		<anypoint-mq:publish doc:name="salesforce-exchange" doc:id="c76e321d-c78a-40f7-961f-66543b13d9b8" config-ref="Anypoint_MQ_Config-Exchange" destination="salesforce-exchange" />
 		<logger level="INFO" doc:name="Logger" doc:id="7b6f1f4a-1dc6-4e7b-8df4-ee122192cdc6" />
