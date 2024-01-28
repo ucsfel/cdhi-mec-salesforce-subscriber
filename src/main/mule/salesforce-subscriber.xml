@@ -9,12 +9,25 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
 	<flow name="anypointmq-salesforce-subscriber" doc:id="d4d115e2-a121-4dba-b988-221035a39aa2" >
-		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-in-sfdc" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-in-sfdc" outputMimeType="application/json" >
+		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-sfdc-lead-in" outputMimeType="application/json" >
 			<reconnect-forever />
 			<anypoint-mq:circuit-breaker onErrorTypes="${messageQueue.circuitBreaker.errors}" errorsThreshold="2" tripTimeout="5000" />
 		</anypoint-mq:subscriber>
 		<set-variable value="#[payload]" doc:name="tmpPayload" doc:id="d4017077-4a5a-4dd6-9825-99a7d5535e33" variableName="tmpPayload"/>
 		<set-variable value="#[payload.payload.collectionPointGuid]" doc:name="collectionPt" doc:id="481554e8-8fea-4b03-a415-4b4f6d604072" variableName="collectionPt"/>
+		<set-variable value="#[payload.payload.dataSubjectEmail]" doc:name="dataSubjectEmail" doc:id="20052707-62f6-49dd-a6e8-2ba156b85a06" variableName="dataSubjectEmail"/>
+		<set-variable value="${onetrust.api_token}" doc:name="api_token" doc:id="60af7674-f912-4787-b321-e35b43023e94" variableName="api_token" />
+		<flow-ref doc:name="onetrust-link-identities-get-byemail" doc:id="862f38aa-3190-47a9-b17b-567fc97e5ddb" name="onetrust-link-identities-get-byemail"/>
+		<ee:transform doc:name="Transform Message" doc:id="a425f70c-7007-493d-9807-e82d33af5142" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+
+{"primaryDataSubjects": payload.content[0].primaryDataSubjects[0]}
+++ vars.tmpPayload.payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 		<ee:transform doc:name="Transform Message" doc:id="9cc7dafc-f450-4f9c-b47c-134e1a79eeb2" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -33,12 +46,12 @@ output application/java
 				<salesforce:publish-platform-event-message platformEventName="OT_Patient_Consent__e" doc:name="Publish platform event message: Patient" doc:id="ab704ca4-4edb-44a0-b06c-7d0347dcb428" config-ref="Salesforce_Config2">
 					<salesforce:platform-event-messages ><![CDATA[#[[payload]]]]></salesforce:platform-event-messages>
 				</salesforce:publish-platform-event-message>
-				<logger level="INFO" doc:name="Logger" doc:id="87afb1b9-8a92-476c-b56c-849266591ae7" message="#['patient consent-&gt;' ++ payload]"/>
+				<logger level="INFO" doc:name="Logger" doc:id="87afb1b9-8a92-476c-b56c-849266591ae7" message="#['patient consent published']"/>
 			</when>
 			<otherwise >
 				<salesforce:publish-platform-event-message doc:name="Publish platform event message: Lead" doc:id="9e65ae60-d2b8-4a32-a34c-9e5e9865a774" config-ref="Salesforce_Config2" platformEventName="OT_Lead_Consent__e">
 				</salesforce:publish-platform-event-message>
-				<logger level="INFO" doc:name="Logger" doc:id="8aa74611-0060-41b6-9c95-6d1126bf4404" message="#['lead consent-&gt;' ++ payload]"/>
+				<logger level="INFO" doc:name="Logger" doc:id="8aa74611-0060-41b6-9c95-6d1126bf4404" message="#['lead consent published']"/>
 			</otherwise>
 		</choice>
 		<error-handler >

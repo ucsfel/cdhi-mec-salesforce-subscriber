@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_17faa898_a9fb_467b_9b0d_495da767c38c_Output_Variables_apiToken = Any
+

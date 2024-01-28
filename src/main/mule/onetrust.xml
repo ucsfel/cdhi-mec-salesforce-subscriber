@@ -82,6 +82,17 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 }]]]></http:headers>
 		</http:request>
 	</sub-flow>
+	<sub-flow name="onetrust-link-identities-get-byemail" doc:id="17faa898-a9fb-467b-9b0d-495da767c38c">
+		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="5957afc6-68bd-40b2-8653-d63ab487b3c1" variableName="apiToken" />
+		<http:request method="GET" doc:name="Request" doc:id="29556193-252f-4e75-aca2-1ac762daad60" config-ref="HTTP_Request_OneTrust" path="#['/api/consentmanager/v2/linkedidentitygroups']">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : vars.apiToken,
+	"primaryDataSubjectIdentifier" : vars.dataSubjectEmail
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
 	<sub-flow name="onetrust-link-identities-post" doc:id="2ed837b4-aaa5-432b-a2ab-81b89c18bcb3">
 		<set-variable value="#['Bearer ' ++ vars.api_token]" doc:name="apiToken" doc:id="0e29cbc8-5429-4203-ac64-a0e2abb90458" variableName="apiToken" />
 		<http:request method="POST" doc:name="Request" doc:id="cc9cf5ae-5f8b-4461-87cd-a1e0f543fade" config-ref="HTTP_Request_OneTrust" path="/api/consentmanager/v2/linkedidentitygroups">
