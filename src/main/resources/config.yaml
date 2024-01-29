@@ -41,9 +41,9 @@ messageQueue:
   clientId: "cdba0a634b1e4a409a92b2ecabc19efb"
   queueName: "consent-receipt-sfdc-in"
   circuitBreaker:
-    errors: "HTTP:SERVICE_UNAVAILABLE, HTTP:CONNECTIVITY, HTTP:TIMEOUT, HTTP:RETRY_EXHAUSTED, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED"
+    errors: "HTTP:SERVICE_UNAVAILABLE, HTTP:CONNECTIVITY, HTTP:TIMEOUT, HTTP:RETRY_EXHAUSTED, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:NOT_FOUND, MULE:RETRY_EXHAUSTED"
     threshold: "3"
-    tripTimeout: "10"
+    tripTimeout: "2"
 cloudhub:
   clientid: "cf2ea576bb2c4c8e864d333dc0c1c95a"
   environment: "034cb83d-ac30-489a-af9e-560493ddb656"

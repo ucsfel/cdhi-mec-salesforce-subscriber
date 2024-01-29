@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
-http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
-	<flow name="anypointmq-salesforce-subscriber" doc:id="d4d115e2-a121-4dba-b988-221035a39aa2" >
-		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-sfdc-lead-in" outputMimeType="application/json" >
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<os:object-store name="Object_store_salesforce-dead-letter" doc:name="Object store" doc:id="9e3ed501-cd00-4eb7-8c42-5149cc4f2191" />
+	<flow name="anypointmq-salesforce-subscriber" doc:id="d4d115e2-a121-4dba-b988-221035a39aa2" maxConcurrency="1">
+		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-sfdc-lead-in" outputMimeType="application/json" acknowledgementMode="MANUAL">
 			<reconnect-forever />
-			<anypoint-mq:circuit-breaker onErrorTypes="${messageQueue.circuitBreaker.errors}" errorsThreshold="2" tripTimeout="5000" />
+			<anypoint-mq:subscriber-type >
+				<anypoint-mq:prefetch maxLocalMessages="${messageQueue.circuitBreaker.threshold}" />
+			</anypoint-mq:subscriber-type>
+			<anypoint-mq:circuit-breaker onErrorTypes="${messageQueue.circuitBreaker.errors}" errorsThreshold="${messageQueue.circuitBreaker.threshold}" tripTimeout="${messageQueue.circuitBreaker.tripTimeout}" tripTimeoutUnit="MINUTES"/>
 		</anypoint-mq:subscriber>
+		<set-variable value="#[attributes.ackToken]" doc:name="ackToken" doc:id="84d5dacc-35a5-43f3-af96-7de1c85c09f8" variableName="ackToken" />
 		<set-variable value="#[payload]" doc:name="tmpPayload" doc:id="d4017077-4a5a-4dd6-9825-99a7d5535e33" variableName="tmpPayload"/>
 		<set-variable value="#[payload.payload.collectionPointGuid]" doc:name="collectionPt" doc:id="481554e8-8fea-4b03-a415-4b4f6d604072" variableName="collectionPt"/>
 		<set-variable value="#[payload.payload.dataSubjectEmail]" doc:name="dataSubjectEmail" doc:id="20052707-62f6-49dd-a6e8-2ba156b85a06" variableName="dataSubjectEmail"/>
@@ -54,10 +60,11 @@ output application/java
 				<logger level="INFO" doc:name="Logger" doc:id="8aa74611-0060-41b6-9c95-6d1126bf4404" message="#['lead consent published']"/>
 			</otherwise>
 		</choice>
+		<anypoint-mq:ack doc:name="Ack" doc:id="eca56be2-ca70-4b7a-8a9b-f792e6d43fb3" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" ackToken="#[vars.ackToken]" />
 		<error-handler >
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b5162478-48b0-4146-b8d9-ee379535b83c" >
-				<logger level="INFO" doc:name="TODO: push tmppayload into error q" doc:id="e1a28be6-9f08-4658-9aaa-6df015466a20" />
-				<ee:transform doc:name="Transform Message" doc:id="7c0d8516-79d2-48a0-ab6a-1c1cb36ab22b" >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="745060ce-6f35-4a45-8eb1-f9c165207b01" type="${messageQueue.circuitBreaker.errors}">
+				<logger level="ERROR" doc:name="log" doc:id="00bbc0af-df03-4abc-b115-2f6bde520acc" message="#['salesforce-subscriber ERROR']" />
+				<ee:transform doc:name="Transform Message" doc:id="b5a4c009-22d1-417e-a65a-2ca00ef2036e" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 
@@ -70,10 +77,25 @@ output application/java
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<cloudhub:create-notification domain="${cloudhub.domain}" doc:name="Create Notification" doc:id="ce695e5c-d620-4119-8fd2-f581df9cfed0" config-ref="CloudHub_Config" priority="ERROR" >
+				<cloudhub:create-notification domain="${cloudhub.domain}" doc:name="Create Notification" doc:id="93700100-84f9-400e-84c5-816b63b2c87b" config-ref="CloudHub_Config" priority="ERROR" >
 					<cloudhub:message ><![CDATA[#[payload.logentry]]]></cloudhub:message>
 				</cloudhub:create-notification>
+				<anypoint-mq:nack doc:name="Nack" doc:id="6c055051-faa6-41bf-a100-e94dfd781f98" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" ackToken="#[vars.ackToken]" />
+			</on-error-propagate>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b5162478-48b0-4146-b8d9-ee379535b83c" type="ANY">
+				<anypoint-mq:publish doc:name="Publish: salesforce-error" doc:id="1440e47e-aa60-47a5-93be-9b3a558081d5" config-ref="Anypoint_MQ_Config-Onetrust" destination="salesforce-error" />
+				<anypoint-mq:ack doc:name="Ack" doc:id="9c09b9a1-4ed6-445e-a270-566debc8fd76" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" ackToken="#[vars.ackToken]" />
 			</on-error-continue>
 		</error-handler>
+	</flow>
+	<flow name="salesforce-subscriber-retry" doc:id="59adfab3-a934-4ab4-a068-7ff69a72cf9f" initialState="started">
+		<anypoint-mq:subscriber doc:name="Subscriber: salesforce-dead-letter" doc:id="cb55f403-c46e-4666-b7fc-af947dc683d9" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="salesforce-dead-letter">
+			<redelivery-policy maxRedeliveryCount="1" objectStore="Object_store_salesforce-dead-letter" />
+			<anypoint-mq:subscriber-type >
+				<anypoint-mq:prefetch maxLocalMessages="1" />
+			</anypoint-mq:subscriber-type>
+		</anypoint-mq:subscriber>
+		<logger level="INFO" doc:name="Logger" doc:id="dc4a69a9-2794-44e9-aefc-59851ab8663e" message="#['onetrust-dead-letter RETRY']"/>
+		<anypoint-mq:publish doc:name="Publish: consent-receipt-sfdc-lead-in" doc:id="4a217b39-46d6-4198-8f06-04bd10c05624" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-sfdc-lead-in"/>
 	</flow>
 </mule>
