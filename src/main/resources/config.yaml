@@ -11,20 +11,6 @@ sfdc:
   token_endpoint: "https://ucsf-clinicalcrm--tst.sandbox.my.salesforce.com/services/oauth2/token"
   principal: "integration.scuba@ucsf.edu.tst"
   audience_url: "https://test.salesforce.com"
-
-#DB_HOST=10.67.11.61
-#DB_HOST=64.54.198.200 (NAT)    
-sql:
-  host: "10.67.11.61"
-  url: "jdbc:sqlserver://10.67.11.61:1433;DataBaseName=MarketingCloudMirror"
-  username: "hstk_tst_admin"
-  dbname: "MarketingCloudMirror"
-#scuba config
-scuba:
-  host: "scuba-db-dev.ucsfmedicalcenter.org"
-  port: "1433"
-  username: "svc-mulescubadev"
-  dbname: "MarketingCloudMirror"
 runtime:
   passcode: "3ncryptP@ssw0rd"
 onetrust:
