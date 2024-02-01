@@ -7,10 +7,10 @@ sfmc:
   data_extension:
     external_key: "637099D6-BB83-4386-A92D-93747B35B377"
 sfdc:
-  consumer_key: "3MVG99PRsqIQWIIw0zVM_gFsS7toAr9.ABVgLmNoBS_0veuH.JhiKG.gVlS1zI6az4qQfSnppZzfBNii.DyBp"
+  consumer_key: "3MVG9eMnfmfDO5NDmXW4W0sFRz6A1MbLwFMZvthgeavfiQnzBrbqLjuEedQ92AN.DfuUSpcryBjpZR8v.f2hI"
   keystore: "csmule.jks"
-  token_endpoint: "https://ucsf-clinicalcrm--tst.sandbox.my.salesforce.com/services/oauth2/token"
-  principal: "otintegrationuser@ucsf.edu.tst"
+  token_endpoint: "https://ucsf-clinicalcrm--otdmdev.sandbox.my.salesforce.com/services/oauth2/token"
+  principal: "otintegrationuser@ucsf.edu.otdmdev"
   audience_url: "https://test.salesforce.com"
 runtime:
   passcode: "3ncryptP@ssw0rd"
@@ -20,7 +20,7 @@ onetrust:
   tenant_id: "3f7d73cb-56ff-4414-b776-0930993842c6"
   patient_collection_pt: "6ce6ed5c-7dd2-4ec1-aaf4-d7109a73c0c3"
 pref-ctr:
-  host: "stage-unified-api.ucsf.edu"
+  host: "dev-unified-api.ucsf.edu"
   client_id: "3e04456f45234fdabc62971070301748"
   client_secret: "C3d1cD05058C42BAb9463FBB04693862"
 messageQueue:
@@ -34,5 +34,5 @@ messageQueue:
 cloudhub:
   clientid: "cf2ea576bb2c4c8e864d333dc0c1c95a"
   environment: "034cb83d-ac30-489a-af9e-560493ddb656"
-  domain: "stage-mec-salesforce-subscriber"
+  domain: "dev-mec-salesforce-subscriber"
 

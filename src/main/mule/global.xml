@@ -22,12 +22,6 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd">
 	<os:object-store name="Object_store-access_token" doc:name="Object store" doc:id="f9aa21af-fa5f-4626-b5c0-c3382fe715c3" entryTtl="1078" config-ref="ObjectStore_Config" maxEntries="1" expirationInterval="60" expirationIntervalUnit="SECONDS"/>
 	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="aa96ef28-4ca6-4ae3-a8c0-9b2f4f559ea1" />
-	<db:config name="MSSQL_Database" doc:name="Database Config" doc:id="13c293ef-eb13-487d-9702-5a53440df5bb" >
-		<db:mssql-connection host="${sql.host}" port="1433" user="${sql.username}" password="${secure::sql.password}" databaseName="${sql.dbname}" />
-	</db:config>
-	<db:config name="MSSQL-scuba" doc:name="Database Config" doc:id="a54ffee6-d90b-45a9-8bf3-a5ae63d2cdbb" >
-		<db:mssql-connection host="${scuba.host}" port="1433" user="${scuba.username}" password="${secure::scuba.password}" databaseName="${scuba.dbname}" />
-	</db:config>
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="730b3dcb-a82e-40b6-9938-71f5668153b5" file="config-secure.yaml" key="3ncryptP@ssw0rd" >
 		<secure-properties:encrypt algorithm="Blowfish" />
 	</secure-properties:config>
@@ -68,8 +62,8 @@ http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/m
 	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="d75d0e1f-73cf-40e9-9127-2522896c3977" >
 		<salesforce:jwt-connection consumerKey="3MVG99PRsqIQWIIw0zVM_gFsS7toAr9.ABVgLmNoBS_0veuH.JhiKG.gVlS1zI6az4qQfSnppZzfBNii.DyBp" keyStore="${sfdc.keystore}" certificateAlias="mule_jwt_2023" principal="${sfdc.principal}" tokenEndpoint="${sfdc.token_endpoint}" audienceUrl="${sfdc.audience_url}" storePassword="Tb20YtrPym9jL2Gd"/>
 	</salesforce:sfdc-config>
-	<salesforce:sfdc-config name="Salesforce_Config2" doc:name="Salesforce Config" doc:id="02a3cb94-1e15-4674-95da-47a65feccdd3" >
-		<salesforce:jwt-connection consumerKey="3MVG9eMnfmfDO5NDmXW4W0sFRz6A1MbLwFMZvthgeavfiQnzBrbqLjuEedQ92AN.DfuUSpcryBjpZR8v.f2hI" keyStore="${sfdc.keystore}" certificateAlias="mule_jwt_2023" principal="otintegrationuser@ucsf.edu.otdmdev" tokenEndpoint="https://ucsf-clinicalcrm--otdmdev.sandbox.my.salesforce.com/services/oauth2/token" audienceUrl="${sfdc.audience_url}" storePassword="Tb20YtrPym9jL2Gd"/>
+	<salesforce:sfdc-config name="Salesforce_Config2" doc:name="Salesforce Config" doc:id="48fa1876-6eee-424e-96a0-13d4cb440c62" >
+		<salesforce:jwt-connection consumerKey="${sfdc.consumer_key}" keyStore="${sfdc.keystore}" certificateAlias="mule_jwt_2023" principal="${sfdc.principal}" tokenEndpoint="${sfdc.token_endpoint}" audienceUrl="${sfdc.audience_url}" storePassword="${secure::sfdc.keystore_pw}"/>
 	</salesforce:sfdc-config>
 	<anypoint-mq:config name="Anypoint_MQ_Config-Salesforce-Clinical" doc:name="Anypoint MQ Config" doc:id="9350e93a-5454-4375-9b47-98f5226dd3d8" >
 		<anypoint-mq:connection url="https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/034cb83d-ac30-489a-af9e-560493ddb656" clientId="e578dc7138614aa7ba7c3cd8ac8992d0" clientSecret="C162335CDce14A9F90010cc2143Ef6C1" />
