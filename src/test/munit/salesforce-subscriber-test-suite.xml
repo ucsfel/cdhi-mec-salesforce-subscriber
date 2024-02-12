@@ -40,5 +40,29 @@
 			<flow-ref doc:name="Flow-ref to anypointmq-salesforce-subscriber" doc:id="09ac11b1-65dd-4494-8279-d08471d625e5" name="anypointmq-salesforce-subscriber"/>
 		</munit:execution>
 	</munit:test>
+	<munit:test name="salesforce-subscriber-test-suite-anypointmq-salesforce-subscriberTester" doc:id="63d688f2-682c-4b1e-9bb9-8ec0d26addb6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when SFDC platform event" doc:id="1a2fc5d0-f896-422a-ae96-4322a5f76874" processor="salesforce:publish-platform-event-message">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Publish platform event message: Lead" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="9e65ae60-d2b8-4a32-a34c-9e5e9865a774" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="OT_Lead_Consent__e" attributeName="platformEventName" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when ACK" doc:id="75e4c5dc-e18d-410f-8679-18ccfd64586f" processor="anypoint-mq:ack">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Ack" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="eca56be2-ca70-4b7a-8a9b-f792e6d43fb3" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Anypoint_MQ_Config-Salesforce-Clinical" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="9f6e5747-7faa-4edb-bbfa-9b006731f20b" >
+				<munit:payload value="#[output application/json --- &#10;&#10;readUrl('classpath://mq\mock_consentreceipt_payload.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to anypointmq-salesforce-subscriber" doc:id="bb040208-43df-4c63-bf50-9432c63d3ffe" name="anypointmq-salesforce-subscriber"/>
+		</munit:execution>
+	</munit:test>
 
 </mule>

@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 	<os:object-store name="Object_store_salesforce-dead-letter" doc:name="Object store" doc:id="9e3ed501-cd00-4eb7-8c42-5149cc4f2191" />
 	<flow name="anypointmq-salesforce-subscriber" doc:id="d4d115e2-a121-4dba-b988-221035a39aa2" maxConcurrency="1">
-		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-sfdc-lead-in" outputMimeType="application/json" acknowledgementMode="MANUAL">
+		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Onetrust" destination="${messageQueue.queueName}" outputMimeType="application/json" acknowledgementMode="MANUAL">
 			<reconnect-forever />
 			<anypoint-mq:subscriber-type >
 				<anypoint-mq:prefetch maxLocalMessages="${messageQueue.circuitBreaker.threshold}" />
