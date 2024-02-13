@@ -100,6 +100,6 @@ output application/java
 			</anypoint-mq:subscriber-type>
 		</anypoint-mq:subscriber>
 		<logger level="INFO" doc:name="Logger" doc:id="dc4a69a9-2794-44e9-aefc-59851ab8663e" message="#['onetrust-dead-letter RETRY']"/>
-		<anypoint-mq:publish doc:name="Publish: consent-receipt-sfdc-lead-in" doc:id="4a217b39-46d6-4198-8f06-04bd10c05624" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="consent-receipt-sfdc-lead-in"/>
+		<anypoint-mq:publish doc:name="Publish: consent-receipt-sfdc-lead-in" doc:id="4a217b39-46d6-4198-8f06-04bd10c05624" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="${messageQueue.queueName}"/>
 	</flow>
 </mule>
