@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 	<os:object-store name="Object_store_salesforce-dead-letter" doc:name="Object store" doc:id="9e3ed501-cd00-4eb7-8c42-5149cc4f2191" />
 	<flow name="anypointmq-salesforce-subscriber" doc:id="d4d115e2-a121-4dba-b988-221035a39aa2" maxConcurrency="1">
-		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Onetrust" destination="${messageQueue.queueName}" outputMimeType="application/json" acknowledgementMode="MANUAL">
+		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="${messageQueue.queueName}" outputMimeType="application/json" acknowledgementMode="MANUAL">
 			<reconnect-forever />
 			<anypoint-mq:subscriber-type >
 				<anypoint-mq:prefetch maxLocalMessages="${messageQueue.circuitBreaker.threshold}" />
@@ -22,7 +22,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<set-variable value="#[payload]" doc:name="tmpPayload" doc:id="d4017077-4a5a-4dd6-9825-99a7d5535e33" variableName="tmpPayload"/>
 		<set-variable value="#[payload.payload.collectionPointGuid]" doc:name="collectionPt" doc:id="481554e8-8fea-4b03-a415-4b4f6d604072" variableName="collectionPt"/>
 		<set-variable value="#[payload.payload.dataSubjectEmail]" doc:name="dataSubjectEmail" doc:id="20052707-62f6-49dd-a6e8-2ba156b85a06" variableName="dataSubjectEmail"/>
-		<set-variable value="${onetrust.api_token}" doc:name="api_token" doc:id="60af7674-f912-4787-b321-e35b43023e94" variableName="api_token" />
+		<set-variable value="${secure::onetrust.api_token}" doc:name="api_token" doc:id="60af7674-f912-4787-b321-e35b43023e94" variableName="api_token" />
 		<flow-ref doc:name="onetrust-link-identities-get-byemail" doc:id="862f38aa-3190-47a9-b17b-567fc97e5ddb" name="onetrust-link-identities-get-byemail"/>
 		<ee:transform doc:name="Transform Message" doc:id="a425f70c-7007-493d-9807-e82d33af5142" >
 			<ee:message >
@@ -57,7 +57,7 @@ output application/java
 			<otherwise >
 				<salesforce:publish-platform-event-message doc:name="Publish platform event message: Lead" doc:id="9e65ae60-d2b8-4a32-a34c-9e5e9865a774" config-ref="Salesforce_Config2" platformEventName="OT_Lead_Consent__e">
 				</salesforce:publish-platform-event-message>
-				<logger level="INFO" doc:name="Logger" doc:id="8aa74611-0060-41b6-9c95-6d1126bf4404" message="#['lead consent published']"/>
+				<logger level="INFO" doc:name="Logger" doc:id="8aa74611-0060-41b6-9c95-6d1126bf4404" message="#['Lead consent published']"/>
 			</otherwise>
 		</choice>
 		<anypoint-mq:ack doc:name="Ack" doc:id="eca56be2-ca70-4b7a-8a9b-f792e6d43fb3" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" ackToken="#[vars.ackToken]" />
@@ -83,7 +83,24 @@ output application/java
 				<anypoint-mq:nack doc:name="Nack" doc:id="6c055051-faa6-41bf-a100-e94dfd781f98" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" ackToken="#[vars.ackToken]" />
 			</on-error-propagate>
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b5162478-48b0-4146-b8d9-ee379535b83c" type="ANY">
-				<anypoint-mq:publish doc:name="Publish: salesforce-error" doc:id="1440e47e-aa60-47a5-93be-9b3a558081d5" config-ref="Anypoint_MQ_Config-Onetrust" destination="salesforce-error" />
+				<anypoint-mq:publish doc:name="Publish: salesforce-error" doc:id="1440e47e-aa60-47a5-93be-9b3a558081d5" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="salesforce-error" />
+				<logger level="ERROR" doc:name="log" doc:id="1d894eb4-4bd2-4beb-8124-a123fbe17aaa" message="#['salesforce-subscriber ERROR']" />
+				<ee:transform doc:name="Transform Message" doc:id="1f20b99a-44c8-470a-ba36-c66e8da1bb93" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+
+var entry = error.detailedDescription
+output application/java
+---
+{
+	datetime: now() as LocalDateTime,
+	logentry: 'ERROR SALESFORCE SUBSCRIBER: ' ++ entry
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<cloudhub:create-notification domain="${cloudhub.domain}" doc:name="Create Notification" doc:id="e1119c21-15c1-4015-b49d-140e566adfaf" config-ref="CloudHub_Config" priority="ERROR" >
+					<cloudhub:message ><![CDATA[#[payload.logentry]]]></cloudhub:message>
+				</cloudhub:create-notification>
 				<anypoint-mq:ack doc:name="Ack" doc:id="9c09b9a1-4ed6-445e-a270-566debc8fd76" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" ackToken="#[vars.ackToken]" />
 			</on-error-continue>
 		</error-handler>

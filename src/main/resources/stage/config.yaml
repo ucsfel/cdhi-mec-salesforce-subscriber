@@ -15,24 +15,25 @@ sfdc:
 runtime:
   passcode: "3ncryptP@ssw0rd"
 onetrust:
-  api_token: "ZjIxOTNhZTkyYjQwNDRmYmJjYzFkZjNjMjAxZDY2ZDA6Qzl3WklxdEg2NXp5QkFjOFNJYVN4WG5ETjYyNUxRaUg="
+  host: "uat-na01.onetrust.com"
+  privacy_host: "privacyportal-uat-na01.onetrust.com"
   pref_url: "https://privacyportal-uat-na01.onetrust.com/ui/#/preferences/multipage/token/"
+  #click on user icon, id under username
   tenant_id: "3f7d73cb-56ff-4414-b776-0930993842c6"
+  is_test: "true"
   patient_collection_pt: "6ce6ed5c-7dd2-4ec1-aaf4-d7109a73c0c3"
-pref-ctr:
-  host: "stage-unified-api.ucsf.edu"
-  client_id: "3e04456f45234fdabc62971070301748"
-  client_secret: "C3d1cD05058C42BAb9463FBB04693862"
 messageQueue:
-  mqUrl: "https://mq-us-west-2.anypoint.mulesoft.com/api/v1"
-  clientId: "cdba0a634b1e4a409a92b2ecabc19efb"
+  mqUrl: "https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/034cb83d-ac30-489a-af9e-560493ddb656"
+  client_id: "e578dc7138614aa7ba7c3cd8ac8992d0"
   queueName: "consent-receipt-sfdc-lead-in"
   circuitBreaker:
     errors: "HTTP:SERVICE_UNAVAILABLE, HTTP:CONNECTIVITY, HTTP:TIMEOUT, HTTP:RETRY_EXHAUSTED, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:NOT_FOUND, MULE:RETRY_EXHAUSTED"
     threshold: "3"
     tripTimeout: "2"
 cloudhub:
+  #see Keeper: WSD-READ-APPLICATION
   clientid: "cf2ea576bb2c4c8e864d333dc0c1c95a"
+  #see AccessMgmt-BusinessGrp-{env} urlpath
   environment: "034cb83d-ac30-489a-af9e-560493ddb656"
   domain: "stage-mec-salesforce-subscriber"
 
