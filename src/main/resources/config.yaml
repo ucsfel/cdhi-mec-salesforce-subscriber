@@ -7,25 +7,24 @@ sfmc:
   data_extension:
     external_key: "637099D6-BB83-4386-A92D-93747B35B377"
 sfdc:
-  consumer_key: "3MVG95jctIhbyCpqWacYp6bth1.2WeFHLdd0UsdyJ4nBHY6TyNVhtrVD3SrrSTwacY6hT.Mhzxd6JBZXKsv7s"
+  consumer_key: "3MVG99PRsqIQWIIw0zVM_gFsS7toAr9.ABVgLmNoBS_0veuH.JhiKG.gVlS1zI6az4qQfSnppZzfBNii.DyBp"
   keystore: "csmule.jks"
-  token_endpoint: "https://ucsf-clinicalcrm.my.salesforce.com/services/oauth2/token"
-  principal: "otintegrationuser@ucsf.edu"
-  #audience_url: "https://ucsf-clinicalcrm.my.salesforce.com/"
-  audience_url: "https://login.salesforce.com"
+  token_endpoint: "https://ucsf-clinicalcrm--tst.sandbox.my.salesforce.com/services/oauth2/token"
+  principal: "otintegrationuser@ucsf.edu.tst"
+  audience_url: "https://test.salesforce.com"
 runtime:
   passcode: "3ncryptP@ssw0rd"
 onetrust:
-  host: "na01.onetrust.com"
-  privacy_host: "privacyportal-na01.onetrust.com"
-  pref_url: "https://privacyportal-na01.onetrust.com/ui/#/preferences/multipage/token/"
+  host: "uat-na01.onetrust.com"
+  privacy_host: "privacyportal-uat-na01.onetrust.com"
+  pref_url: "https://privacyportal-uat-na01.onetrust.com/ui/#/preferences/multipage/token/"
   #click on user icon, id under username
-  tenant_id: "896caafa-eb04-4d8a-887e-1808eed69804"
-  is_test: "false"
-  patient_collection_pt: "6ce6ed5c-7dd2-4ec1-aaf4-d7109a73c0c3" #TODO: change when Patient is in PROD
+  tenant_id: "3f7d73cb-56ff-4414-b776-0930993842c6"
+  is_test: "true"
+  patient_collection_pt: "6ce6ed5c-7dd2-4ec1-aaf4-d7109a73c0c3"
 messageQueue:
-  mqUrl: "https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/567bad7d-43a7-4c51-b74f-fde6f3ea9217"
-  client_id: "72b7cc294c10436ca554928e366c8453"
+  mqUrl: "https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/034cb83d-ac30-489a-af9e-560493ddb656"
+  client_id: "e578dc7138614aa7ba7c3cd8ac8992d0"
   queueName: "consent-receipt-sfdc-lead-in"
   circuitBreaker:
     errors: "HTTP:SERVICE_UNAVAILABLE, HTTP:CONNECTIVITY, HTTP:TIMEOUT, HTTP:RETRY_EXHAUSTED, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:NOT_FOUND, MULE:RETRY_EXHAUSTED"
@@ -35,6 +34,6 @@ cloudhub:
   #see Keeper: WSD-READ-APPLICATION
   clientid: "cf2ea576bb2c4c8e864d333dc0c1c95a"
   #see AccessMgmt-BusinessGrp-{env} urlpath
-  environment: "567bad7d-43a7-4c51-b74f-fde6f3ea9217"
-  domain: "prod-mec-salesforce-subscriber"
+  environment: "034cb83d-ac30-489a-af9e-560493ddb656"
+  domain: "stage-mec-salesforce-subscriber"
 
