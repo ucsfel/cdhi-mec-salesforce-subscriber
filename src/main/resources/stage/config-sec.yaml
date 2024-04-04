@@ -5,6 +5,7 @@ sfdc:
 runtime:
   passcode: "3ncryptP@ssw0rd"
 onetrust:
+  client_secret: "HCDSWAlzfaXA46X1m5uiEtf9DHzUN2Iu"
   api_token: "ZjIxOTNhZTkyYjQwNDRmYmJjYzFkZjNjMjAxZDY2ZDA6Qzl3WklxdEg2NXp5QkFjOFNJYVN4WG5ETjYyNUxRaUg="
 messageQueue:
   client_secret: "C162335CDce14A9F90010cc2143Ef6C1"

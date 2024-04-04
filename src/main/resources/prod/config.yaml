@@ -16,6 +16,7 @@ sfdc:
 runtime:
   passcode: "3ncryptP@ssw0rd"
 onetrust:
+  client_id: "0257d3830cc24999b66710764c02e126"
   host: "na01.onetrust.com"
   privacy_host: "privacyportal-na01.onetrust.com"
   pref_url: "https://privacyportal-na01.onetrust.com/ui/#/preferences/multipage/token/"

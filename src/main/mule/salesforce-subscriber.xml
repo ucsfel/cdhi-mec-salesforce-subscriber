@@ -22,7 +22,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<set-variable value="#[payload]" doc:name="tmpPayload" doc:id="d4017077-4a5a-4dd6-9825-99a7d5535e33" variableName="tmpPayload"/>
 		<set-variable value="#[payload.payload.collectionPointGuid]" doc:name="collectionPt" doc:id="481554e8-8fea-4b03-a415-4b4f6d604072" variableName="collectionPt"/>
 		<set-variable value="#[payload.payload.dataSubjectEmail]" doc:name="dataSubjectEmail" doc:id="20052707-62f6-49dd-a6e8-2ba156b85a06" variableName="dataSubjectEmail"/>
-		<set-variable value="${secure::onetrust.api_token}" doc:name="api_token" doc:id="60af7674-f912-4787-b321-e35b43023e94" variableName="api_token" />
+		<flow-ref doc:name="onetrust-token" doc:id="e1e6c1c8-6efe-483d-bac3-25315b040465" name="onetrust-token"/>
 		<flow-ref doc:name="onetrust-link-identities-get-byemail" doc:id="862f38aa-3190-47a9-b17b-567fc97e5ddb" name="onetrust-link-identities-get-byemail"/>
 		<ee:transform doc:name="Transform Message" doc:id="a425f70c-7007-493d-9807-e82d33af5142" >
 			<ee:message >
