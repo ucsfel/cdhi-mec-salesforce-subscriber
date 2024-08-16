@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 	<os:object-store name="Object_store_salesforce-dead-letter" doc:name="Object store" doc:id="9e3ed501-cd00-4eb7-8c42-5149cc4f2191" />
 	<flow name="anypointmq-salesforce-subscriber" doc:id="d4d115e2-a121-4dba-b988-221035a39aa2" maxConcurrency="1">
-		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-lead-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="${messageQueue.queueName}" outputMimeType="application/json" acknowledgementMode="MANUAL">
+		<anypoint-mq:subscriber doc:name="Subscriber consent-receipt-sfdc-in" doc:id="4040a6a9-ed54-43cc-89b5-b7839a946017" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="${messageQueue.queueName}" outputMimeType="application/json" acknowledgementMode="MANUAL">
 			<reconnect-forever />
 			<anypoint-mq:subscriber-type >
 				<anypoint-mq:prefetch maxLocalMessages="${messageQueue.circuitBreaker.threshold}" />
@@ -117,6 +117,6 @@ output application/java
 			</anypoint-mq:subscriber-type>
 		</anypoint-mq:subscriber>
 		<logger level="INFO" doc:name="Logger" doc:id="dc4a69a9-2794-44e9-aefc-59851ab8663e" message="#['onetrust-dead-letter RETRY']"/>
-		<anypoint-mq:publish doc:name="Publish: consent-receipt-sfdc-lead-in" doc:id="4a217b39-46d6-4198-8f06-04bd10c05624" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="${messageQueue.queueName}"/>
+		<anypoint-mq:publish doc:name="Publish: consent-receipt-sfdc-in" doc:id="4a217b39-46d6-4198-8f06-04bd10c05624" config-ref="Anypoint_MQ_Config-Salesforce-Clinical" destination="${messageQueue.queueName}"/>
 	</flow>
 </mule>

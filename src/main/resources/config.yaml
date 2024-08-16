@@ -26,7 +26,8 @@ onetrust:
 messageQueue:
   mqUrl: "https://mq-us-west-2.anypoint.mulesoft.com/api/v1/organizations/8f9ff49c-7213-45d6-ae70-a89968883c15/environments/034cb83d-ac30-489a-af9e-560493ddb656"
   client_id: "e578dc7138614aa7ba7c3cd8ac8992d0"
-  queueName: "consent-receipt-sfdc-lead-in"
+  #queueName: "consent-receipt-sfdc-lead-in"
+  queueName: "consent-receipt-sfdc-in"
   circuitBreaker:
     errors: "HTTP:SERVICE_UNAVAILABLE, HTTP:CONNECTIVITY, HTTP:TIMEOUT, HTTP:RETRY_EXHAUSTED, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:NOT_FOUND, MULE:RETRY_EXHAUSTED"
     threshold: "3"
