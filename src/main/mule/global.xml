@@ -59,11 +59,8 @@ http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/m
 	<http:request-config name="HTTP_Request_OneTrust_Preferences" doc:name="HTTP Request configuration" doc:id="063ff4d5-8830-4d94-8d66-3bdc53da47f8" >
 		<http:request-connection protocol="HTTPS" host="preferences.ucsf.edu" />
 	</http:request-config>
-	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="d75d0e1f-73cf-40e9-9127-2522896c3977" >
-		<salesforce:jwt-connection consumerKey="3MVG99PRsqIQWIIw0zVM_gFsS7toAr9.ABVgLmNoBS_0veuH.JhiKG.gVlS1zI6az4qQfSnppZzfBNii.DyBp" keyStore="${sfdc.keystore}" certificateAlias="mule_jwt_2023" principal="${sfdc.principal}" tokenEndpoint="${sfdc.token_endpoint}" audienceUrl="${sfdc.audience_url}" storePassword="Tb20YtrPym9jL2Gd"/>
-	</salesforce:sfdc-config>
 	<salesforce:sfdc-config name="Salesforce_Config2" doc:name="Salesforce Config" doc:id="48fa1876-6eee-424e-96a0-13d4cb440c62" >
-		<salesforce:jwt-connection consumerKey="${sfdc.consumer_key}" keyStore="${sfdc.keystore}" certificateAlias="mule_jwt_2023" principal="${sfdc.principal}" tokenEndpoint="${sfdc.token_endpoint}" audienceUrl="${sfdc.audience_url}" storePassword="${secure::sfdc.keystore_pw}">
+		<salesforce:jwt-connection consumerKey="${sfdc.consumer_key}" keyStore="${sfdc.keystore}" certificateAlias="mule_apps_jwt_2025" principal="${sfdc.principal}" tokenEndpoint="${sfdc.token_endpoint}" audienceUrl="${sfdc.audience_url}" storePassword="${secure::sfdc.keystore_pw}">
 			<reconnection >
 				<reconnect />
 			</reconnection>

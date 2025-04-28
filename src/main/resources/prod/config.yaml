@@ -7,8 +7,8 @@ sfmc:
   data_extension:
     external_key: "637099D6-BB83-4386-A92D-93747B35B377"
 sfdc:
-  consumer_key: "3MVG95jctIhbyCpqWacYp6bth1.2WeFHLdd0UsdyJ4nBHY6TyNVhtrVD3SrrSTwacY6hT.Mhzxd6JBZXKsv7s"
-  keystore: "csmule.jks"
+  consumer_key: "3MVG95jctIhbyCpqWacYp6bth14h8eQQuVIFkeHsioSOTQIKTQt3tEt4cvSHliAXbHl5TpjeZVSnqFc6TooZ9"
+  keystore: "ClinicalCRMMuleJWT.jks"
   token_endpoint: "https://ucsf-clinicalcrm.my.salesforce.com/services/oauth2/token"
   principal: "otintegrationuser@ucsf.edu"
   #audience_url: "https://ucsf-clinicalcrm.my.salesforce.com/"
